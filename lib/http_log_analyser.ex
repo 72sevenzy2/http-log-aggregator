@@ -3,7 +3,7 @@ defmodule HttpLogAnalyser do
     todo: add proper logs.
   """
   @doc """
-  parse_line() takes in a singular line from your log file and returns a map containing its relevant meta data.
+  parse_line() takes in a singular line from your log file and returns a tuple containing a map with its relevant meta data.
 
   ## Examples
   iex>HttpLogAnalyser.parse_line(~s(127.0.0.1 - - [27/Oct/2026:10:00:00 +0000] "GET /api/tasks HTTP/1.1" 200 512))
@@ -34,5 +34,47 @@ defmodule HttpLogAnalyser do
       _ ->
         {:error, "include a proper log line to be parsed."}
     end
+  end
+
+  @doc """
+  parse_file() takes in a file path for a log file to which returns a tuple containing relevant logs metadata.
+
+  ## Examples
+  iex>HttpLogAnalyser.parse_file("test/testLogs.log")
+  {:ok,
+  %{
+    method: method,
+    endpoint: endpoint,
+    status: String.to_integer(status),
+    bytes: String.to_integer(bytes)
+  }
+  }
+  """
+
+  def parse_file(filePath) do
+    File.stream!(filePath)
+    |> Enum.map(fn line ->
+      case String.split(line, "\"") do
+        [_prefix, request, suffix] ->
+          [method, endpoint, _version] = String.split(request)
+          [status, bytes] = String.split(suffix)
+
+          {
+            :ok,
+            %{
+              method: method,
+              endpoint: endpoint,
+              status: String.to_integer(status),
+              bytes: String.to_integer(bytes)
+            }
+          }
+
+        _ ->
+          {
+            :error,
+            "please include a proper log file."
+          }
+      end
+    end)
   end
 end
