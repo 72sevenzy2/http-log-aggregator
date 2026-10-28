@@ -1,15 +1,14 @@
 defmodule HttpLogAnalyser do
   @moduledoc """
-  Documentation for `HttpLogAnalyser`.
+    todo: add proper logs.
   """
 
   @doc """
-  Hello world.
+  todo: add proper parse() docs.
 
   ## Examples
-
-      iex> HttpLogAnalyser.hello()
-      :world
+  iex> HttpLogAnalyser.hello()
+  :world
 
   """
   def hello do
