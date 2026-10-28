@@ -2,6 +2,13 @@ defmodule HttpLogAnalyserTest do
   use ExUnit.Case
   doctest HttpLogAnalyser
 
+  test "parse_line() returns an err when the log structure is invalid" do
+    assert HttpLogAnalyser.parse_line(
+             ~s(127.0.0.1 - - [27/Oct/2026:10:00:00 +0000]"GET /api/tasks HTTP/1.1" 200512
+)
+           ) == {:error, :invalid_log_structure}
+  end
+
   test "parse_line() test" do
     assert HttpLogAnalyser.parse_line(
              ~s(127.0.0.1 - - [27/Oct/2026:10:00:00 +0000] "GET /api/tasks HTTP/1.1" 200 512

@@ -3,7 +3,7 @@ defmodule HttpLogAnalyser do
     todo: add proper logs.
   """
   @doc """
-  parse_line() takes in a singular line from your log file and returns a tuple containing a map with its relevant meta data.
+  parse_line() takes in a singular line from your log file and returns a tuple containing a map with its relevant meta data, if the log structure is invalid then it will return :invalid_log_structure
 
   ## Examples
   iex>HttpLogAnalyser.parse_line(~s(127.0.0.1 - - [27/Oct/2026:10:00:00 +0000] "GET /api/tasks HTTP/1.1" 200 512))
@@ -32,12 +32,12 @@ defmodule HttpLogAnalyser do
          }}
 
       _ ->
-        {:error, "include a proper log line to be parsed."}
+        {:error, :invalid_log_structure}
     end
   end
 
   @doc """
-  parse_file() takes in a file path for a log file to which returns a tuple containing relevant logs metadata.
+  parse_file() takes in a file path for a log file to which returns a tuple containing relevant logs metadata, if the log file structure is wrong, it will return an :invalid_log_structure
 
   ## Examples
   iex>HttpLogAnalyser.parse_file("test/testLogs.log")
@@ -73,7 +73,7 @@ defmodule HttpLogAnalyser do
           _ ->
             {
               :error,
-              "please include a proper log file."
+              :invalid_log_structure
             }
         end
       end)
