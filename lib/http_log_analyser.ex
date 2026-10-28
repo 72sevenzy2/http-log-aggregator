@@ -7,11 +7,13 @@ defmodule HttpLogAnalyser do
 
   ## Examples
   iex>HttpLogAnalyser.parse_line(~s(127.0.0.1 - - [27/Oct/2026:10:00:00 +0000] "GET /api/tasks HTTP/1.1" 200 512))
-  %{
-    method: "GET",
-    endpoint: "/api/tasks",
-    status: 200,
-    bytes: 512
+  { :ok, 
+    %{
+      method: "GET",
+      endpoint: "/api/tasks",
+      status: 200,
+      bytes: 512
+    }
   }
   """
 
@@ -21,15 +23,16 @@ defmodule HttpLogAnalyser do
         [method, endpoint, _version] = String.split(request)
         [status, bytes] = String.split(suffix)
 
-        %{
-          method: method,
-          endpoint: endpoint,
-          status: String.to_integer(status),
-          bytes: String.to_integer(bytes)
-        }
+        {:ok,
+         %{
+           method: method,
+           endpoint: endpoint,
+           status: String.to_integer(status),
+           bytes: String.to_integer(bytes)
+         }}
 
       _ ->
-        IO.puts("include a proper log line to be parsed.")
+        {:error, "include a proper log line to be parsed."}
     end
   end
 end
