@@ -2,24 +2,17 @@ defmodule HttpLogAnalyser do
   @moduledoc """
     todo: add proper logs.
   """
-
-  @doc """
-  todo: add proper parse() docs.
-
-  ## Examples
-  iex> HttpLogAnalyser.hello()
-  :world
-
-  """
-  def hello do
-    :world
-  end
-
   @doc """
   parse_line() takes in a singular line from your log file and returns a map containing its relevant meta data.
 
   ## Examples
-    todo: add proper example usage
+  iex>HttpLogAnalyser.parse_line(~s(127.0.0.1 - - [27/Oct/2026:10:00:00 +0000] "GET /api/tasks HTTP/1.1" 200 512))
+  %{
+    method: "GET",
+    endpoint: "/api/tasks",
+    status: 200,
+    bytes: 512
+  }
   """
 
   def parse_line(line) do
@@ -36,7 +29,7 @@ defmodule HttpLogAnalyser do
         }
 
       _ ->
-        nil
+        IO.puts("include a proper log line to be parsed.")
     end
   end
 end
