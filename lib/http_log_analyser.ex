@@ -1,7 +1,13 @@
 defmodule HttpLogAnalyser do
   @moduledoc """
-    todo: add proper logs.
+  parses HTTP log files or individual lines of logs to which it extracts request(s) metadata.
+
+  ie, parse_line() parses an individual log to extract the requests method, endpoint, number of bytes, and status.
+  parse_file() parses an existing log file you have to which extracts each request logs status, endpoint, etc.
+
+  if an malformed log structure/log file is passed in, either function will return an tuple containing: {:error, :invalid_log_structure}
   """
+
   @doc """
   parse_line() takes in a singular line from your log file and returns a tuple containing a map with its relevant meta data, if the log structure is invalid then it will return :invalid_log_structure
 
