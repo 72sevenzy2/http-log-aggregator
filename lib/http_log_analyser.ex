@@ -20,16 +20,31 @@ defmodule HttpLogAnalyser do
   def parse_line(line) do
     case String.split(line, "\"") do
       [_prefix, request, suffix] ->
-        [method, endpoint, _version] = String.split(request)
-        [status, bytes] = String.split(suffix)
+        case {String.split(request), String.split(suffix)} do
+          {[method, endpoint, _version], [status, bytes]} ->
+            case Integer.parse(status) do
+              {status, ""} ->
+                case Integer.parse(bytes) do
+                  {bytes, ""} ->
+                    {:ok,
+                     %{
+                       method: method,
+                       endpoint: endpoint,
+                       status: status,
+                       bytes: bytes
+                     }}
 
-        {:ok,
-         %{
-           method: method,
-           endpoint: endpoint,
-           status: String.to_integer(status),
-           bytes: String.to_integer(bytes)
-         }}
+                  _ ->
+                    {:error, :invalid_log_structure}
+                end
+
+              _ ->
+                {:error, :invalid_log_structure}
+            end
+
+          _ ->
+            {:error, :invalid_log_structure}
+        end
 
       _ ->
         {:error, :invalid_log_structure}
