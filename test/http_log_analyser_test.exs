@@ -15,4 +15,15 @@ defmodule HttpLogAnalyserTest do
                 bytes: 512
               }}
   end
+
+  test "parse_file() test" do
+    assert HttpLogAnalyser.parse_file("test/testLogs.log") ==
+             [
+               {:ok, %{method: "GET", endpoint: "/api/tasks", status: 200, bytes: 512}},
+               {:ok, %{method: "POST", endpoint: "/api/tasks", status: 201, bytes: 128}},
+               {:ok, %{method: "GET", endpoint: "/api/users", status: 404, bytes: 64}},
+               {:ok, %{method: "GET", endpoint: "/api/tasks", status: 500, bytes: 32}},
+               {:ok, %{method: "DELETE", endpoint: "/api/tasks/1", status: 204, bytes: 0}}
+             ]
+  end
 end

@@ -41,14 +41,14 @@ defmodule HttpLogAnalyser do
 
   ## Examples
   iex>HttpLogAnalyser.parse_file("test/testLogs.log")
-  {:ok,
-  %{
-    method: method,
-    endpoint: endpoint,
-    status: String.to_integer(status),
-    bytes: String.to_integer(bytes)
-  }
-  }
+  [
+   {:ok, %{method: "GET", endpoint: "/api/tasks", status: 200, bytes: 512}},
+   {:ok, %{method: "POST", endpoint: "/api/tasks", status: 201, bytes: 128}},
+   {:ok, %{method: "GET", endpoint: "/api/users", status: 404, bytes: 64}},
+   {:ok, %{method: "GET", endpoint: "/api/tasks", status: 500, bytes: 32}},
+   {:ok, %{method: "DELETE", endpoint: "/api/tasks/1", status: 204, bytes: 0}}
+  ]
+
   """
 
   def parse_file(filePath) do
