@@ -52,29 +52,34 @@ defmodule HttpLogAnalyser do
   """
 
   def parse_file(filePath) do
-    File.stream!(filePath)
-    |> Enum.map(fn line ->
-      case String.split(line, "\"") do
-        [_prefix, request, suffix] ->
-          [method, endpoint, _version] = String.split(request)
-          [status, bytes] = String.split(suffix)
+    try do
+      File.stream!(filePath)
+      |> Enum.map(fn line ->
+        case String.split(line, "\"") do
+          [_prefix, request, suffix] ->
+            [method, endpoint, _version] = String.split(request)
+            [status, bytes] = String.split(suffix)
 
-          {
-            :ok,
-            %{
-              method: method,
-              endpoint: endpoint,
-              status: String.to_integer(status),
-              bytes: String.to_integer(bytes)
+            {
+              :ok,
+              %{
+                method: method,
+                endpoint: endpoint,
+                status: String.to_integer(status),
+                bytes: String.to_integer(bytes)
+              }
             }
-          }
 
-        _ ->
-          {
-            :error,
-            "please include a proper log file."
-          }
-      end
-    end)
+          _ ->
+            {
+              :error,
+              "please include a proper log file."
+            }
+        end
+      end)
+    rescue
+      e in File.Error ->
+        {:error, e.reason}
+    end
   end
 end

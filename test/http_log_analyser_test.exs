@@ -16,6 +16,10 @@ defmodule HttpLogAnalyserTest do
               }}
   end
 
+  test "parse_file() returns an err when file does not exist" do
+    assert HttpLogAnalyser.parse_file("nonExistent.logs") == {:error, :enoent}
+  end
+
   test "parse_file() test" do
     assert HttpLogAnalyser.parse_file("test/testLogs.log") ==
              [
