@@ -76,27 +76,7 @@ defmodule HttpLogAnalyser do
     try do
       File.stream!(filePath)
       |> Enum.map(fn line ->
-        case String.split(line, "\"") do
-          [_prefix, request, suffix] ->
-            [method, endpoint, _version] = String.split(request)
-            [status, bytes] = String.split(suffix)
-
-            {
-              :ok,
-              %{
-                method: method,
-                endpoint: endpoint,
-                status: String.to_integer(status),
-                bytes: String.to_integer(bytes)
-              }
-            }
-
-          _ ->
-            {
-              :error,
-              :invalid_log_structure
-            }
-        end
+        parse_line(line)
       end)
     rescue
       e in File.Error ->
