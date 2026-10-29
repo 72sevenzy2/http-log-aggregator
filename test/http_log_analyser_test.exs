@@ -37,4 +37,30 @@ defmodule HttpLogAnalyserTest do
                {:ok, %{method: "DELETE", endpoint: "/api/tasks/1", status: 204, bytes: 0}}
              ]
   end
+
+  test "aggregate_log() test" do
+    assert HttpLogAnalyser.aggregate_log(HttpLogAnalyser.parse_file("test/testLogs.log")) == %{
+             total_requests: 5,
+             total_bytes: 736,
+             failed_requests: 2,
+             invalid_formats: 0,
+             endpoint_stats: %{
+               "/api/tasks" => %{
+                 requests: 3,
+                 errors: 1,
+                 bytes: 672
+               },
+               "/api/users" => %{
+                 requests: 1,
+                 errors: 1,
+                 bytes: 64
+               },
+               "/api/tasks/1" => %{
+                 requests: 1,
+                 errors: 0,
+                 bytes: 0
+               }
+             }
+           }
+  end
 end

@@ -85,12 +85,49 @@ defmodule HttpLogAnalyser do
   end
 
   @doc """
+  aggregate_log() takes in a list of log entries, and returns an aggregated summary of the logs in the format:
+  %{
+    total_requests: <total number of requests logged>,
+    total_bytes: <sum of the bytes each request consumed>,
+    failed_requests: <number of failed requests/invalid log formats>,
+    endpoint_stats: %{
+      requests: <number of requests to a specific endpoint>,
+      errors: <number of failed requests>,
+      bytes: <sum of the bytes consumed by requests>
+    }
+   }
+
+  ## Examples
+  iex>HttpLogAnalyser.aggregate_log(HttpLogAnalyser.parse_file("test/testLogs.log"))
+  %{
+  total_requests: 5,
+  total_bytes: 736,
+  failed_requests: 2,
+  invalid_formats: 0,
+  endpoint_stats: %{
+    "/api/tasks" => %{
+      requests: 3,
+      errors: 1,
+      bytes: 672
+    },
+    "/api/users" => %{
+      requests: 1,
+      errors: 1,
+      bytes: 64
+    },
+    "/api/tasks/1" => %{
+      requests: 1,
+      errors: 0,
+      bytes: 0
+    }
+   }
+  }
 
   """
 
-  def aggregate_log(entry) do
+  def aggregate_log(entries) do
     Enum.reduce(
-      entry,
+      entries,
       %{
         total_requests: 0,
         total_bytes: 0,
