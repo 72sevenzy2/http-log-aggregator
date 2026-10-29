@@ -83,4 +83,50 @@ defmodule HttpLogAnalyser do
         {:error, e.reason}
     end
   end
+
+  @doc """
+
+  """
+
+  def aggregate_log(entry) do
+    Enum.reduce(
+      entry,
+      %{
+        total_requests: 0,
+        total_bytes: 0,
+        failed_requests: 0,
+        invalid_formats: 0,
+        endpoint_stats: %{}
+      },
+      fn
+        {:ok, %{endpoint: endpoint, status: status, bytes: bytes}}, acc ->
+          failed = if status >= 400, do: 1, else: 0
+
+          endpoint_statistics =
+            Map.update(
+              acc.endpoint_stats,
+              endpoint,
+              %{requests: 1, errors: failed, bytes: bytes},
+              fn stats ->
+                %{
+                  requests: stats.requests + 1,
+                  errors: stats.errors + failed,
+                  bytes: stats.bytes + bytes
+                }
+              end
+            )
+
+          %{
+            acc
+            | total_requests: acc.total_requests + 1,
+              total_bytes: acc.total_bytes + bytes,
+              failed_requests: acc.failed_requests + failed,
+              endpoint_stats: endpoint_statistics
+          }
+
+        {:error, _reason}, acc ->
+          %{acc | invalid_formats: acc.failed_requests + 1}
+      end
+    )
+  end
 end
