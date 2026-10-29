@@ -33,3 +33,25 @@ HttpLogAnalyser.parse_file("access.log")
    {:ok, %{method: "DELETE", endpoint: "/api/tasks/1", status: 204, bytes: 0}}
   ]
 ```
+
+<h2>generating aggregated summaries of log entries:</h2>
+
+```
+HttpLogAnalyser.aggregate_log(HttpLogAnalyser.parse_file("access.log"))
+```
+
+<h3>output should be similar to:</h3>
+
+```
+%{
+    total_requests: <total number of requests logged>,
+    total_bytes: <sum of the bytes each request consumed>,
+    failed_requests: <number of failed requests/invalid log formats>,
+    endpoint_stats: %{
+      requests: <number of requests to a specific endpoint>,
+      errors: <number of failed requests>,
+      bytes: <sum of the bytes consumed by requests>
+    }
+}
+```
+<h3>may be more than one 'endpoint_stats' map included depending on the number of log lines the log file includes.</h3>
