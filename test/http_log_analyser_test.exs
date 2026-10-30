@@ -38,6 +38,17 @@ defmodule HttpLogAnalyserTest do
              ]
   end
 
+  test "aggregate_log() returns an err on invalid log formats" do
+    assert HttpLogAnalyser.aggregate_log(HttpLogAnalyser.parse_file("test/invalidLogs.log")) ==
+             %{
+               total_requests: 0,
+               total_bytes: 0,
+               failed_requests: 0,
+               invalid_formats: 1,
+               endpoint_stats: %{}
+             }
+  end
+
   test "aggregate_log() test" do
     assert HttpLogAnalyser.aggregate_log(HttpLogAnalyser.parse_file("test/testLogs.log")) == %{
              total_requests: 5,
