@@ -95,6 +95,15 @@ defmodule HttpLogAnalyser do
       errors: <number of failed requests>,
       bytes: <sum of the bytes consumed by requests>
     }
+  }
+
+    aggregate_log() returns an err upon the first occurence of an invalid log format of an individual log given in a list of logs, similar to:
+   %{
+    total_requests: 0,
+    total_bytes: 0,
+    failed_requests: 0,
+    invalid_formats: 1,
+    endpoint_stats: %{}
    }
 
   ## Examples
