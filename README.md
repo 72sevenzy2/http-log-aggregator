@@ -54,4 +54,4 @@ HttpLogAnalyser.aggregate_log(HttpLogAnalyser.parse_file("access.log"))
     }
 }
 ```
-<h3>may be more than one 'endpoint_stats' map included depending on the number of log lines the log file includes.</h3>
+<h3>^ may be more than one 'endpoint_stats' map returned depending on the number of log lines the log file includes.</h3>
