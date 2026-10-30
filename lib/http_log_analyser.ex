@@ -175,4 +175,10 @@ defmodule HttpLogAnalyser do
       end
     )
   end
+
+  def process_chunk(logs) do
+    logs
+    |> Enum.map(&parse_line/1)
+    |> aggregate_log()
+  end
 end
