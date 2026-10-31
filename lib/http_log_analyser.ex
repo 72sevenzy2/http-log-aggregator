@@ -202,8 +202,34 @@ defmodule HttpLogAnalyser do
     }
   end
 
-  # def aggregate_file(path, opts \\ []) do
-  #   max_concurrency = Keyword.get(opts, :max_concurrency, System.schedulers_online())
-  #   chunk_size = Keyword.get(opts, :chunk_size, 1_000)
-  # end
+  def aggregate_file(path, opts \\ []) do
+    max_concurrency = Keyword.get(opts, :max_concurrency, Sysem.schedulers_online())
+    chunk_size = Keyword.get(opts, :chunk_size, 1_000)
+
+    try do
+      path
+      |> File.stream!()
+      |> Stream.chunk_every(chunk_size)
+      |> Task.async_stream(
+        &process_chunk/1,
+        max_concurrency: max_concurrency,
+        ordered: false,
+        timeout: 30_000,
+        on_timeout: :kill_task
+      )
+      |> Enum.reduce_while(
+        {:ok, aggregate_log([])},
+        fn
+          {:ok, chunk_stats}, {:ok, acc} ->
+            {:cont, {:ok, merge_stats(acc, chunk_stats)}}
+
+          {:exit, reason}, _acc ->
+            {:halt, {:error, {:worker_failed, reason}}}
+        end
+      )
+    rescue
+      e in File.Error ->
+        {:error, e.reason}
+    end
+  end
 end
