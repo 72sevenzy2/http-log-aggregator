@@ -133,6 +133,7 @@ defmodule Worker do
   def aggregate_file(path, opts \\ []) do
     max_concurrency = Keyword.get(opts, :max_concurrency, System.schedulers_online())
     chunk_size = Keyword.get(opts, :chunk_size, 1_000)
+    validate_opts(max_concurrency, chunk_size)
 
     try do
       path
@@ -158,6 +159,20 @@ defmodule Worker do
     rescue
       e in File.Error ->
         {:error, e.reason}
+    end
+  end
+
+  # validates the opts passed in aggregate_file().
+  defp validate_opts(max_concurrency, chunk_size) do
+    cond do
+      not (is_integer(chunk_size) and chunk_size > 0) ->
+        {:error, :invalid_chunk_size}
+
+      not (is_integer(max_concurrency) and max_concurrency > 0) ->
+        {:error, :invalid_max_concurrency}
+
+      true ->
+        :ok
     end
   end
 end
