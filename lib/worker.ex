@@ -26,7 +26,7 @@ defmodule Worker do
   end
 
   def aggregate_file(path, opts \\ []) do
-    max_concurrency = Keyword.get(opts, :max_concurrency, Sysem.schedulers_online())
+    max_concurrency = Keyword.get(opts, :max_concurrency, System.schedulers_online())
     chunk_size = Keyword.get(opts, :chunk_size, 1_000)
 
     try do
