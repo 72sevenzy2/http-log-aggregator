@@ -193,11 +193,12 @@ defmodule HttpLogAnalyser do
       end)
 
     %{
-      total_requests: r.total_requests + l.total_requests,
-      total_bytes: r.total_bytes + l.total_bytes,
-      failed_requests: r.failed_requests + l.failed_requests,
-      invalid_formats: r.invalid_formats + l.invalid_formats,
-      endpoint_stats: endpoint_stats
+      l
+      | total_requests: r.total_requests + l.total_requests,
+        total_bytes: r.total_bytes + l.total_bytes,
+        failed_requests: r.failed_requests + l.failed_requests,
+        invalid_formats: r.invalid_formats + l.invalid_formats,
+        endpoint_stats: endpoint_stats
     }
   end
 
