@@ -181,4 +181,28 @@ defmodule HttpLogAnalyser do
     |> Enum.map(&parse_line/1)
     |> aggregate_log()
   end
+
+  def merge_stats(l, r) do
+    endpoint_stats =
+      Map.merge(l.endpoint_stats, r.endpoint_stats, fn _endpoint, l, r ->
+        %{
+          requests: l.requests + r.requests,
+          errors: l.errors + r.errors,
+          bytes: l.bytes + r.bytes
+        }
+      end)
+
+    %{
+      total_requests: r.total_requests + l.total_requests,
+      total_bytes: r.total_bytes + l.total_bytes,
+      failed_requests: r.failed_requests + l.failed_requests,
+      invalid_formats: r.invalid_formats + l.invalid_formats,
+      endpoint_stats: endpoint_stats
+    }
+  end
+
+  # def aggregate_file(path, opts \\ []) do
+  #   max_concurrency = Keyword.get(opts, :max_concurrency, System.schedulers_online())
+  #   chunk_size = Keyword.get(opts, :chunk_size, 1_000)
+  # end
 end
