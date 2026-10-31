@@ -1,4 +1,37 @@
 defmodule Worker do
+  @moduledoc """
+  Holds needed utilities for concurrent-workers inorder for parsing chunks of logs and aggregated summaries.
+  """
+
+  @doc """
+  process_chunk() takes in a list of log information and parses them via HttpLogAnalyser.parse_line(), and afterwards, returns an aggregated log summary.
+
+  ## Examples
+  iex>Worker.process_chunk("test/testLogs.log")
+  %{
+    total_requests: 5,
+    total_bytes: 736,
+    failed_requests: 2,
+    invalid_formats: 0,
+    endpoint_stats: %{
+      "/api/tasks" => %{
+        requests: 3,
+        errors: 1,
+        bytes: 672
+      },
+      "/api/users" => %{
+        requests: 1,
+        errors: 1,
+        bytes: 64
+      },
+      "/api/tasks/1" => %{
+        requests: 1,
+        errors: 0,
+        bytes: 0
+      }
+    }
+  }
+  """
   def process_chunk(logs) do
     logs
     |> Enum.map(&HttpLogAnalyser.parse_line/1)
