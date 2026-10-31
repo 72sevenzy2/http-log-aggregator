@@ -152,6 +152,9 @@ defmodule Worker do
           {:ok, chunk_stats}, {:ok, acc} ->
             {:cont, {:ok, merge_stats(acc, chunk_stats)}}
 
+          {:exit, :timeout}, _acc ->
+            {:halt, {:error, :worker_timeout}}
+
           {:exit, reason}, _acc ->
             {:halt, {:error, {:worker_failed, reason}}}
         end
